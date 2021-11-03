@@ -14,7 +14,7 @@
 #  - return a tuple version, size, hash , path etc...
 #  - passing argument : showpy c:\
 #  - make an object from this tool : example a 'showpy' object , showpy.search("c:\",getversion=True)
-#  - convert path to Windows of linux  with detection of them
+#  - convert path to Windows of linux  with detection of them example : 'posix', 'nt', 'java'
 #  - create a sub function for print informations  print("version: ", ..... get info(result)...
 #  - get the better and fastest hash function :  source : https://stackoverflow.com/questions/61229719/hashing-file-within-drf-post-http-request
 
