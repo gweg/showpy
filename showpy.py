@@ -8,6 +8,16 @@
 # Copyright:   (c) catineau 2021
 # Licence:     <your licence>
 #-------------------------------------------------------------------------------
+# keep to implemente:
+#
+#  - chosse information de get from file : version , size hash path, 
+#  - return a tuple version, size, hash , path etc...
+#  - passing argument : showpy c:\
+#  - convert path to Windows of linux  with detection of them
+#  - create a sub function for print informations  print("version: ", ..... get info(result)...
+#
+#
+
 import subprocess
 import os
 import hashlib
