@@ -17,7 +17,7 @@
 #  - convert path to Windows of linux  with detection of them example : 'posix', 'nt', 'java'
 #  - create a sub function for print informations  print("version: ", ..... get info(result)...
 #  - get the better and fastest hash function :  source : https://stackoverflow.com/questions/61229719/hashing-file-within-drf-post-http-request
-
+# -  possibility have separator :  version:  Python 3.9.1;size= 923192 ; hash= d1542dbd731960ec3636047de092f09d7fba4da5252acca4dd9be1d6a4600caf;  path:  c:\Windows\py.exe
 
 import subprocess
 import os
