@@ -24,6 +24,7 @@
 import subprocess
 import os
 import hashlib
+import sys
 
 def sha256sum(filename):
     h  = hashlib.sha256()
@@ -34,9 +35,20 @@ def sha256sum(filename):
             h.update(mv[:n])
     return h.hexdigest()
 
+def get_root_path():
+    return os.path.abspath(os.sep)
+
+def get_platform():
+    return  sys.platform
 def main():
+    defaultrootpath = get_root_path()
+    platform = get_platform() # linux or win32
     nbrversion=0
-    for root, subFolder, files in os.walk("c:\\"):
+
+    if len(sys.argv)>0:
+        defaultrootpath=str(sys.argv[1])
+
+    for root, subFolder, files in os.walk(defaultrootpath):
         for item in files:
             if item in ("python.exe","python3.exe","py.exe","python27.exe","py3.exe","py2.exe") :
                 # display hash of file . https://nitratine.net/blog/post/how-to-hash-files-in-python/
