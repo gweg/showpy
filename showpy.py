@@ -32,6 +32,8 @@ class PyDir:
     pythonExecutables=["python.exe","python3.exe","py.exe","python27.exe","py3.exe","py2.exe","pypy3.exe","pypy.exe"]
     pythonBasedExecutables = ["py2.exe", "pypy3.exe","cpython.exe"]
 
+    appOptions={"version":"-version","hash":"-hash"}
+
     def __init__(self):
         pass
 
