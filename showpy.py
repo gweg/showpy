@@ -29,6 +29,9 @@ import sys
 
 class PyDir:
 
+    pythonExecutables=["python.exe","python3.exe","py.exe","python27.exe","py3.exe","py2.exe","pypy3.exe","pypy.exe"]
+    pythonBasedExecutables = ["py2.exe", "pypy3.exe","cpython.exe"]
+
     def __init__(self):
         pass
 
@@ -61,7 +64,7 @@ class PyDir:
 
         for root, subFolder, files in os.walk(self.defaultrootpath):
             for item in files:
-                if item in ("python.exe","python3.exe","py.exe","python27.exe","py3.exe","py2.exe") :
+                if item in (self.pythonExecutables or self.pythonBasedExecutables):
                     # display hash of file . https://nitratine.net/blog/post/how-to-hash-files-in-python/
                     fileNamePath = str(os.path.join(root,item))
                     file_size = os.path.getsize(fileNamePath)
