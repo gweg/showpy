@@ -32,7 +32,7 @@ class PyDir:
     pythonExecutables=["python.exe","python3.exe","py.exe","python27.exe","py3.exe","py2.exe","pypy3.exe","pypy.exe"]
     pythonBasedExecutables = ["py2.exe", "pypy3.exe","cpython.exe","ipython.exe"]
 
-    appOptions={"version":"-version","hash":"-hash"}
+    appOptions={"version":"-version" , "hash":"-hash" , "size":"-size" , "path":"-path"}
 
     def __init__(self):
         self.current_file_size=0
@@ -44,6 +44,12 @@ class PyDir:
         else:
             result = args[0]
             versionInfo = result.stdout.decode("utf-8").strip("\r\n")
+
+            if result.stderr.decode("utf-8") != "":
+                versionInfo = result.stderr.decode("utf-8")
+
+
+
         print("version: ", versionInfo.ljust(19), " size:",
               str(self.current_file_size).ljust(10), " hash:", self.sha256sum(self.current_fileNamePath).ljust(65), " path: ",
               self.current_fileNamePath)
@@ -91,15 +97,12 @@ class PyDir:
                         continue
                     try:
                         result=subprocess.run([self.current_fileNamePath,"--version"],capture_output=True)
-                        if result.stdout.decode("utf-8") != "":
-                            self.printInfos(result)
+
                     except:
                         self.printInfos()
-
+                    else:
+                        self.printInfos(result)
                         #print("version : probleme",fileNamePath )
-
-
-
 
                     finally:
                         nbpythonexe += 1
