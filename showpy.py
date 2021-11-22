@@ -30,21 +30,35 @@ import sys
 class PyDir:
 
     pythonExecutables=["python.exe","python3.exe","py.exe","python27.exe","py3.exe","py2.exe","pypy3.exe","pypy.exe"]
-    pythonBasedExecutables = ["py2.exe", "pypy3.exe","cpython.exe"]
+    pythonBasedExecutables = ["py2.exe", "pypy3.exe","cpython.exe","ipython.exe"]
 
     appOptions={"version":"-version","hash":"-hash"}
 
     def __init__(self):
-        pass
+        self.current_file_size=0
+        self.current_fileNamePath=""
+
+    def printInfos(self,*args):
+        if len(args) == 0:
+            versionInfo = "None"
+        else:
+            result = args[0]
+            versionInfo = result.stdout.decode("utf-8").strip("\r\n")
+        print("version: ", versionInfo.ljust(19), " size:",
+              str(self.current_file_size).ljust(10), " hash:", self.sha256sum(self.current_fileNamePath).ljust(65), " path: ",
+              self.current_fileNamePath)
 
     def sha256sum(self,filename):
-        h  = hashlib.sha256()
-        b  = bytearray(128*1024)
-        mv = memoryview(b)
-        with open(filename, 'rb', buffering=0) as f:
-            for n in iter(lambda : f.readinto(mv), 0):
-                h.update(mv[:n])
-        return h.hexdigest()
+        if os.path.getsize(filename)>0:
+            h  = hashlib.sha256()
+            b  = bytearray(128*1024)
+            mv = memoryview(b)
+            with open(filename, 'rb', buffering=0) as f:
+                for n in iter(lambda : f.readinto(mv), 0):
+                    h.update(mv[:n])
+            return h.hexdigest()
+        else:
+            return "None"
 
     def get_root_path(self):
         return os.path.abspath(os.sep)
@@ -68,29 +82,30 @@ class PyDir:
             for item in files:
                 if item in (self.pythonExecutables or self.pythonBasedExecutables):
                     # display hash of file . https://nitratine.net/blog/post/how-to-hash-files-in-python/
-                    fileNamePath = str(os.path.join(root,item))
-                    file_size = os.path.getsize(fileNamePath)
-                    if file_size==0:
-                        print("size error for file:",(fileNamePath)," size=",file_size)
+                    self.current_fileNamePath = str(os.path.join(root,item))
+                    self.current_file_size = os.path.getsize(self.current_fileNamePath)
+                    if self.current_file_size==0:
+                        #print("size error for file:",(fileNamePath)," size=",file_size)
+                        self.printInfos()
+
                         continue
                     try:
-                        result=subprocess.run([fileNamePath,"--version"],capture_output=True)
-
+                        result=subprocess.run([self.current_fileNamePath,"--version"],capture_output=True)
+                        if result.stdout.decode("utf-8") != "":
+                            self.printInfos(result)
                     except:
-                        print("version : probleme",fileNamePath )
+                        self.printInfos()
 
-                    else:
+                        #print("version : probleme",fileNamePath )
 
-                        if result.stdout.decode("utf-8")!="":
-                            print("version: ",result.stdout.decode("utf-8").strip("\r\n").ljust(19)," size:",str(file_size).ljust(16)," hash:",self.sha256sum(fileNamePath).ljust(70)," path: ",fileNamePath)
 
-                        else:
-                            print("version: ",result.stderr.decode("utf-8").strip("\r\n").ljust(19)," size:",str(file_size).ljust(16)," hash:",self.sha256sum(fileNamePath).ljust(70)," path: ",fileNamePath)
+
+
                     finally:
                         nbpythonexe += 1
 
 
-        print("total python executable version found :{}".format(nbpythonexe))
+        print("sum of real python executable version found :{}".format(nbpythonexe))
 
 def main():
 
