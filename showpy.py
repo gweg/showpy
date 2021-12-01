@@ -51,7 +51,7 @@ class PyDir:
 
 
         print("version: ", versionInfo.ljust(19), " size:",
-              str(self.current_file_size).ljust(10), " hash:", self.sha256sum(self.current_fileNamePath).ljust(65), " path: ",
+              str(self.current_file_size).rjust(10), " hash:", self.sha256sum(self.current_fileNamePath).ljust(65), " path: ",
               self.current_fileNamePath)
 
     def sha256sum(self,filename):
