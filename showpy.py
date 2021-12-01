@@ -47,6 +47,7 @@ class PyDir:
             # remove text inside parentheses with re
             versionInfo = result.stdout.decode("utf-8").strip("\r\n")
             versionInfo=re.sub("([\(\[]).*?([\)\]])", "\g<1>\g<2>", versionInfo)
+            versionInfo = versionInfo.replace("()","(...)")
 
             if result.stderr.decode("utf-8") != "":
                 versionInfo = result.stderr.decode("utf-8")
@@ -119,7 +120,12 @@ def main():
     pyDir=PyDir()
 
     if len(sys.argv) > 1:
+
         defaultrootpath = str(sys.argv[1])
+        if "-notitle" in sys.argv:
+            print("ok")
+        #TODO handle tile showing optionnal
+        print(f"showpy process with directory path:{defaultrootpath}")
         pyDir.process(defaultrootpath)
     else:
         print("[showpy] [path]:")
