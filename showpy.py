@@ -25,6 +25,7 @@ import subprocess
 import os
 import hashlib
 import sys
+import re
 
 
 class PyDir:
@@ -43,14 +44,16 @@ class PyDir:
             versionInfo = "None"
         else:
             result = args[0]
+            # remove text inside parentheses with re
             versionInfo = result.stdout.decode("utf-8").strip("\r\n")
+            versionInfo=re.sub("([\(\[]).*?([\)\]])", "\g<1>\g<2>", versionInfo)
 
             if result.stderr.decode("utf-8") != "":
                 versionInfo = result.stderr.decode("utf-8")
 
 
         versionInfo = versionInfo.split("\r\n")[0]
-        line = " version : {} size : {} ".format(versionInfo,self.current_file_size)
+        line = f" version : {versionInfo : <20} size : {self.current_file_size:>10} hash : {self.sha256sum(self.current_fileNamePath):>65} path : {self.current_fileNamePath}"
         print(line)
         #print(line.replace("\n", ""))
         #print("version: ", versionInfo.ljust(19), " size:",              str(self.current_file_size).rjust(10), " hash:", self.sha256sum(self.current_fileNamePath).ljust(65), " path: ",self.current_fileNamePath)
