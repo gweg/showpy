@@ -49,10 +49,11 @@ class PyDir:
                 versionInfo = result.stderr.decode("utf-8")
 
 
-
-        print("version: ", versionInfo.ljust(19), " size:",
-              str(self.current_file_size).rjust(10), " hash:", self.sha256sum(self.current_fileNamePath).ljust(65), " path: ",
-              self.current_fileNamePath)
+        versionInfo = versionInfo.split("\r\n")[0]
+        line = " version : {} size : {} ".format(versionInfo,self.current_file_size)
+        print(line)
+        #print(line.replace("\n", ""))
+        #print("version: ", versionInfo.ljust(19), " size:",              str(self.current_file_size).rjust(10), " hash:", self.sha256sum(self.current_fileNamePath).ljust(65), " path: ",self.current_fileNamePath)
 
     def sha256sum(self,filename):
         if os.path.getsize(filename)>0:
