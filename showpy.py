@@ -53,7 +53,7 @@ class PyDir:
 
 
         versionInfo = versionInfo.split("\r\n")[0]
-        line = f" version : {versionInfo : <20} size : {self.current_file_size:>10} hash : {self.sha256sum(self.current_fileNamePath):>65} path : {self.current_fileNamePath}"
+        line = f" version:{versionInfo : <20} size:{self.current_file_size:>10} hash:{self.sha256sum(self.current_fileNamePath):>65} path:{self.current_fileNamePath}"
         print(line)
         #print(line.replace("\n", ""))
         #print("version: ", versionInfo.ljust(19), " size:",              str(self.current_file_size).rjust(10), " hash:", self.sha256sum(self.current_fileNamePath).ljust(65), " path: ",self.current_fileNamePath)
