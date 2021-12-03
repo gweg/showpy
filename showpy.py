@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 # Name:        showpy
 # Purpose:
 #
@@ -7,7 +7,7 @@
 # Created:     03/11/2021
 # Copyright:   (c) catineau 2021
 # Licence:     <your licence>
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 # keep to implemente:
 #
 #  - make an object from this tool : example a 'showpy' object , showpy.search("c:\",getversion=True)
@@ -29,43 +29,45 @@ import re
 
 
 class PyDir:
+    pythonExecutables = ["python.exe", "python3.exe", "py.exe", "python27.exe", "py3.exe", "py2.exe", "pypy3.exe",
+                         "pypy.exe"]
+    pythonBasedExecutables = ["py2.exe", "pypy3.exe", "cpython.exe", "ipython.exe"]
 
-    pythonExecutables=["python.exe","python3.exe","py.exe","python27.exe","py3.exe","py2.exe","pypy3.exe","pypy.exe"]
-    pythonBasedExecutables = ["py2.exe", "pypy3.exe","cpython.exe","ipython.exe"]
-
-    appOptions={"version":"-version" , "hash":"-hash" , "size":"-size" , "path":"-path"}
+    appOptions = {"version": "-version", "hash": "-hash", "size": "-size", "path": "-path"}
 
     def __init__(self):
-        self.current_file_size=0
-        self.current_fileNamePath=""
+        self.current_file_size = 0
+        self.current_fileNamePath = ""
 
-    def printInfos(self,*args):
+    def printInfos(self, *args):
         if len(args) == 0:
             versionInfo = "None"
         else:
             result = args[0]
             # remove text inside parentheses with re
-            versionInfo = result.stdout.decode("utf-8").strip("\r\n")
-            versionInfo=re.sub("([\(\[]).*?([\)\]])", "\g<1>\g<2>", versionInfo)
-            versionInfo = versionInfo.replace("()","(...)")
+            versionInfo = result.stdout.decode("utf-8").strip("\r\n").upper()
+            if versionInfo == "":
+                return "None"
+            #versionInfo = re.sub("([\(\[]).*?([\)\]])", "\g<1>\g<2>", versionInfo)
+            #versionInfo = versionInfo.replace("()", "(...)")
+            versionInfo = re.sub(r"(\w+)( |.)(\d+)( |.)(\d+)( |.)(\d+)",r"\1 \3.\5.\7",versionInfo)
 
             if result.stderr.decode("utf-8") != "":
                 versionInfo = result.stderr.decode("utf-8")
 
-
         versionInfo = versionInfo.split("\r\n")[0]
         line = f" version: {versionInfo : <20} size: {self.current_file_size:>10} hash: {self.sha256sum(self.current_fileNamePath):>65} path: {self.current_fileNamePath}"
         print(line)
-        #print(line.replace("\n", ""))
-        #print("version: ", versionInfo.ljust(19), " size:",              str(self.current_file_size).rjust(10), " hash:", self.sha256sum(self.current_fileNamePath).ljust(65), " path: ",self.current_fileNamePath)
+        # print(line.replace("\n", ""))
+        # print("version: ", versionInfo.ljust(19), " size:",              str(self.current_file_size).rjust(10), " hash:", self.sha256sum(self.current_fileNamePath).ljust(65), " path: ",self.current_fileNamePath)
 
-    def sha256sum(self,filename):
-        if os.path.getsize(filename)>0:
-            h  = hashlib.sha256()
-            b  = bytearray(128*1024)
+    def sha256sum(self, filename):
+        if os.path.getsize(filename) > 0:
+            h = hashlib.sha256()
+            b = bytearray(128 * 1024)
             mv = memoryview(b)
             with open(filename, 'rb', buffering=0) as f:
-                for n in iter(lambda : f.readinto(mv), 0):
+                for n in iter(lambda: f.readinto(mv), 0):
                     h.update(mv[:n])
             return h.hexdigest()
         else:
@@ -75,65 +77,60 @@ class PyDir:
         return os.path.abspath(os.sep)
 
     def get_platform(self):
-        return  sys.platform
+        return sys.platform
 
-    def process(self,defaultrootpath):
+    def process(self, defaultrootpath):
 
-        self.defaultrootpath=defaultrootpath
+        self.defaultrootpath = defaultrootpath
 
-        if defaultrootpath=="":
+        if defaultrootpath == "":
             self.defaultrootpath = self.get_root_path()
 
         platform = self.get_platform()  # linux or win32
 
-        nbrversion=0
-        nbpythonexe=0
+        nbrversion = 0
+        nbpythonexe = 0
 
         for root, subFolder, files in os.walk(self.defaultrootpath):
             for item in files:
                 if item in (self.pythonExecutables or self.pythonBasedExecutables):
                     # display hash of file . https://nitratine.net/blog/post/how-to-hash-files-in-python/
-                    self.current_fileNamePath = str(os.path.join(root,item))
+                    self.current_fileNamePath = str(os.path.join(root, item))
                     self.current_file_size = os.path.getsize(self.current_fileNamePath)
-                    if self.current_file_size==0:
-                        #print("size error for file:",(fileNamePath)," size=",file_size)
+                    if self.current_file_size == 0:
+                        # print("size error for file:",(fileNamePath)," size=",file_size)
                         self.printInfos()
 
                         continue
                     try:
-                        result=subprocess.run([self.current_fileNamePath,"--version"],capture_output=True)
+                        result = subprocess.run([self.current_fileNamePath, "--version"], capture_output=True)
 
                     except:
                         self.printInfos()
                     else:
                         self.printInfos(result)
-                        #print("version : probleme",fileNamePath )
+                        # print("version : probleme",fileNamePath )
 
                     finally:
                         nbpythonexe += 1
 
-
         print("sum of real python executable version found :{}".format(nbpythonexe))
 
-def main():
 
-    pyDir=PyDir()
+def main():
+    pyDir = PyDir()
 
     if len(sys.argv) > 1:
 
         defaultrootpath = str(sys.argv[1])
         if "-notitle" in sys.argv:
             print("ok")
-        #TODO handle tile showing optionnal
-        print(f"showpy process with directory path:{defaultrootpath}")
+        # TODO handle tile showing optionnal
+        print(f"showpy start process for :{defaultrootpath}")
         pyDir.process(defaultrootpath)
     else:
         print("[showpy] [path]:")
 
 
-
-
-
-if __name__ == '__main__':
-
+if __name__ == "__main__":
     main()
