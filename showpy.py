@@ -124,7 +124,7 @@ class PyDir:
 
                         nbpythonexe += 1
 
-        print("sum of real python executable version found :{}".format(nbpythonexe))
+        print("sum of python executable version found :{}".format(nbpythonexe))
 
 
 def main():
