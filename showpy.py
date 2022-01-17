@@ -1,12 +1,12 @@
 # -------------------------------------------------------------------------------
 # Name:        showpy
-# Purpose:
+# Purpose:     list all version of python executable in the specified directory
 #
 # Author:      catineau
 #
 # Created:     03/11/2021
-# Copyright:   (c) catineau 2021
-# Licence:     <your licence>
+# Copyright:   (c) Grégoire Catineau 2021
+# Licence:     CC0
 # -------------------------------------------------------------------------------
 # keep to implemente:
 #
@@ -29,6 +29,8 @@ import re
 
 
 class PyDir:
+    #TODO implement regex with for "python*.exe" or "py*.Exe"
+
     pythonExecutables = ["python.exe", "python3.exe", "py.exe", "python27.exe", "py3.exe", "py2.exe", "pypy3.exe",
                          "pypy.exe"]
     pythonBasedExecutables = ["py2.exe", "pypy3.exe", "cpython.exe", "ipython.exe"]
@@ -39,7 +41,7 @@ class PyDir:
         self.current_file_size = 0
         self.current_fileNamePath = ""
 
-    def take_version(self,chaine,regex):
+    def detect_version(self,chaine,regex):
 
 
         if chaine.stderr.decode("utf-8") != "":
@@ -110,14 +112,14 @@ class PyDir:
                     try:
                         result = subprocess.run([self.current_fileNamePath, "--version"], capture_output=True)
 
-                        version = self.take_version(result,r"([1-9][0-9]|[0-9])(\.|)([1-9][0-9]|[0-9]|)(\.|)([1-9][0-9]|[0-9]|)")
+                        version = self.detect_version(result,r"([1-9][0-9]|[0-9])(\.|)([1-9][0-9]|[0-9]|)(\.|)([1-9][0-9]|[0-9]|)")
 
                     except:
                         version="[None]"
 
                     finally:
 
-                        line = f" version: {version : <8} size: {self.current_file_size:>10} hash 256: {self.sha256sum(self.current_fileNamePath):>65} path: {self.current_fileNamePath}"
+                        line = f" version: {version : <8} size: {self.current_file_size:>10} hash(256): {self.sha256sum(self.current_fileNamePath):>65} path: {self.current_fileNamePath}"
                         print(line)
 
                         nbpythonexe += 1
