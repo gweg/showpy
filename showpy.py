@@ -39,27 +39,28 @@ class PyDir:
         self.current_file_size = 0
         self.current_fileNamePath = ""
 
-    def printInfos(self, *args):
-        if len(args) == 0:
+    def take_version(self,chaine,regex):
+        chaine=str(chaine.stdout)
+
+        if len(chaine) == 0:
             versionInfo = "None"
         else:
-            result = args[0]
-            # remove text inside parentheses with re
-            versionInfo = result.stdout.decode("utf-8").strip("\r\n").upper()
-            if versionInfo == "":
-                return "None"
-            #versionInfo = re.sub("([\(\[]).*?([\)\]])", "\g<1>\g<2>", versionInfo)
-            #versionInfo = versionInfo.replace("()", "(...)")
-            versionInfo = re.sub(r"(\w+)( |.)(\d+)( |.)(\d+)( |.)(\d+)",r"\1 \3.\5.\7",versionInfo)
+            result = chaine
 
-            if result.stderr.decode("utf-8") != "":
-                versionInfo = result.stderr.decode("utf-8")
+        #if result.stderr.decode("utf-8") != "":
+        #    versionInfo = str(result.stderr.decode("utf-8").strip("\r\n"))
+        #else:
 
-        versionInfo = versionInfo.split("\r\n")[0]
-        line = f" version: {versionInfo : <20} size: {self.current_file_size:>10} hash: {self.sha256sum(self.current_fileNamePath):>65} path: {self.current_fileNamePath}"
-        print(line)
-        # print(line.replace("\n", ""))
-        # print("version: ", versionInfo.ljust(19), " size:",              str(self.current_file_size).rjust(10), " hash:", self.sha256sum(self.current_fileNamePath).ljust(65), " path: ",self.current_fileNamePath)
+        versionInfo = chaine
+
+
+        regex = r"([1-9][0-9]|[0-9])(\.|)([1-9][0-9]|[0-9]|)(\.|)([1-9][0-9]|[0-9]|)"
+
+        matches = re.search(regex, versionInfo)
+        if matches:
+            return str(matches.group(1)+"."+matches.group(3)+"."+matches.group(5))
+        else:
+            return ""
 
     def sha256sum(self, filename):
         if os.path.getsize(filename) > 0:
@@ -81,6 +82,8 @@ class PyDir:
 
     def process(self, defaultrootpath):
 
+
+
         self.defaultrootpath = defaultrootpath
 
         if defaultrootpath == "":
@@ -94,21 +97,35 @@ class PyDir:
         for root, subFolder, files in os.walk(self.defaultrootpath):
             for item in files:
                 if item in (self.pythonExecutables or self.pythonBasedExecutables):
+                    version=""
                     # display hash of file . https://nitratine.net/blog/post/how-to-hash-files-in-python/
                     self.current_fileNamePath = str(os.path.join(root, item))
                     self.current_file_size = os.path.getsize(self.current_fileNamePath)
-                    if self.current_file_size == 0:
-                        # print("size error for file:",(fileNamePath)," size=",file_size)
-                        self.printInfos()
+                    print(nbpythonexe," ",self.current_fileNamePath)
 
-                        continue
+                    if nbpythonexe==18:
+                        pass
+
+                    if str(self.current_fileNamePath)==r"c:\Python27\ArcGIS10.8\python.exe":
+                        pass
+                    if self.current_file_size == 0:
+                        pass
+                        # print("size error for file:",(fileNamePath)," size=",file_size)
+                        #self.printInfos()
+
+                        #continue
                     try:
                         result = subprocess.run([self.current_fileNamePath, "--version"], capture_output=True)
 
+                        version = self.take_version(result,r"([1-9][0-9]|[0-9])(\.|)([1-9][0-9]|[0-9]|)(\.|)([1-9][0-9]|[0-9]|)")
+
+                        line = f" version: {version : <8} size: {self.current_file_size:>10} hash 256: {self.sha256sum(self.current_fileNamePath):>65} path: {self.current_fileNamePath}"
+                        #print(line)
+
                     except:
-                        self.printInfos()
+                        print("")
                     else:
-                        self.printInfos(result)
+                        print("")
                         # print("version : probleme",fileNamePath )
 
                     finally:
