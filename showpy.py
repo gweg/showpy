@@ -40,18 +40,16 @@ class PyDir:
         self.current_fileNamePath = ""
 
     def take_version(self,chaine,regex):
-        chaine=str(chaine.stdout)
 
-        if len(chaine) == 0:
-            versionInfo = "None"
+
+        if chaine.stderr.decode("utf-8") != "":
+            versionInfo = str(chaine.stderr.decode("utf-8").strip("\r\n"))
         else:
-            result = chaine
+            versionInfo = str(chaine.stdout)
 
-        #if result.stderr.decode("utf-8") != "":
-        #    versionInfo = str(result.stderr.decode("utf-8").strip("\r\n"))
-        #else:
+        if len(str(chaine)) == 0:
+            versionInfo = "[none]"
 
-        versionInfo = chaine
 
 
         regex = r"([1-9][0-9]|[0-9])(\.|)([1-9][0-9]|[0-9]|)(\.|)([1-9][0-9]|[0-9]|)"
@@ -101,34 +99,27 @@ class PyDir:
                     # display hash of file . https://nitratine.net/blog/post/how-to-hash-files-in-python/
                     self.current_fileNamePath = str(os.path.join(root, item))
                     self.current_file_size = os.path.getsize(self.current_fileNamePath)
-                    print(nbpythonexe," ",self.current_fileNamePath)
+                    #print(nbpythonexe," ",self.current_fileNamePath)
 
-                    if nbpythonexe==18:
+                    if r"c:\Users\catineau\AppData\Local\Programs\Python\Python39\Lib\venv\scripts\nt\python.exe" == self.current_fileNamePath:
                         pass
 
-                    if str(self.current_fileNamePath)==r"c:\Python27\ArcGIS10.8\python.exe":
-                        pass
                     if self.current_file_size == 0:
                         pass
-                        # print("size error for file:",(fileNamePath)," size=",file_size)
-                        #self.printInfos()
-
-                        #continue
+                    line=""
                     try:
                         result = subprocess.run([self.current_fileNamePath, "--version"], capture_output=True)
 
                         version = self.take_version(result,r"([1-9][0-9]|[0-9])(\.|)([1-9][0-9]|[0-9]|)(\.|)([1-9][0-9]|[0-9]|)")
 
-                        line = f" version: {version : <8} size: {self.current_file_size:>10} hash 256: {self.sha256sum(self.current_fileNamePath):>65} path: {self.current_fileNamePath}"
-                        #print(line)
-
                     except:
-                        print("")
-                    else:
-                        print("")
-                        # print("version : probleme",fileNamePath )
+                        version="[None]"
 
                     finally:
+
+                        line = f" version: {version : <8} size: {self.current_file_size:>10} hash 256: {self.sha256sum(self.current_fileNamePath):>65} path: {self.current_fileNamePath}"
+                        print(line)
+
                         nbpythonexe += 1
 
         print("sum of real python executable version found :{}".format(nbpythonexe))
