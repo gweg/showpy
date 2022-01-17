@@ -91,7 +91,7 @@ class PyDir:
 
         platform = self.get_platform()  # linux or win32
 
-        nbrversion = 0
+
         nbpythonexe = 0
 
         for root, subFolder, files in os.walk(self.defaultrootpath):
