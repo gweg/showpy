@@ -1,19 +1,19 @@
 # -------------------------------------------------------------------------------
 # Name:        showpy
-# Purpose:     list all version of python executable in the specified directory
+# Purpose:     list all version of python executable in the specified directory with directory recursivity
 #
 # Author:      catineau
 #
 # Created:     03/11/2021
-# Copyright:   (c) Grégoire Catineau 2021
+# Copyright:   (c) Grégoire Catineau 2022
 # Licence:     CC0
 # -------------------------------------------------------------------------------
 # keep to implemente:
-#
-#  - make an object from this tool : example a 'showpy' object , showpy.search("c:\",getversion=True)
-#  - choose information de get from file : version , size hash path, sum of files size,
+#  TODO
+#  Done - make an object from this tool : example a 'showpy' object , showpy.search("c:\",getversion=True)
+#  - choose options to process and display: version , size hash path, sum of files size,
 #  - return a tuple version, size, hash , path etc...
-#  - passing argument : showpy c:\ : Done
+#  Done - passing directory argument : showpy c:\
 #  - convert path to Windows of linux  with detection of them example : 'posix', 'nt', 'java'
 #  - create a sub function for print informations  print("version: ", ..... get info(result)...
 #  - get the better and fastest hash function :  source : https://stackoverflow.com/questions/61229719/hashing-file-within-drf-post-http-request
@@ -28,13 +28,13 @@ import sys
 import re
 
 
-class PyDir:
+class PyExe:
     #TODO implement regex with for "python*.exe" or "py*.Exe"
 
     pythonExecutables = ["python.exe", "python3.exe", "py.exe", "python27.exe", "py3.exe", "py2.exe", "pypy3.exe",
                          "pypy.exe"]
     pythonBasedExecutables = ["py2.exe", "pypy3.exe", "cpython.exe", "ipython.exe"]
-
+    #TODO implement these options
     appOptions = {"version": "-version", "hash": "-hash", "size": "-size", "path": "-path"}
 
     def __init__(self):
@@ -80,7 +80,7 @@ class PyDir:
     def get_platform(self):
         return sys.platform
 
-    def process(self, defaultrootpath):
+    def search(self, defaultrootpath):
 
 
 
@@ -128,16 +128,16 @@ class PyDir:
 
 
 def main():
-    pyDir = PyDir()
+    pyexe = PyExe()
 
     if len(sys.argv) > 1:
 
         defaultrootpath = str(sys.argv[1])
         if "-notitle" in sys.argv:
             print("ok")
-        # TODO handle tile showing optionnal
+        # TODO handle tile fields line showing optionnal
         print(f"showpy start process for :{defaultrootpath}")
-        pyDir.process(defaultrootpath)
+        pyexe.search(defaultrootpath)
     else:
         print("[showpy] [path]:")
 
