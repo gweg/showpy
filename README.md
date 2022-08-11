@@ -1,2 +1,2 @@
 # showpy
-list all python version of interpretor executable versions in the file system
+list all version of the executable python interpretor in the file system
