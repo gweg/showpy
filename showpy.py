@@ -118,8 +118,8 @@ class PyExe:
                         version="[None]"
 
                     finally:
-
-                        line = f" version: {version : <8} size: {self.current_file_size:>10} hash(256): {self.sha256sum(self.current_fileNamePath):>65} path: {self.current_fileNamePath}"
+                        #line = f" version: {version : <8} size: {self.current_file_size:>10} h(256): {self.sha256sum(self.current_fileNamePath):>65} path: {self.current_fileNamePath}"
+                        line = f" version: {version : <8} size: {self.current_file_size:>10} h(256): ....{self.sha256sum(self.current_fileNamePath)[:10]:>10} path: {self.current_fileNamePath}"
                         print(line)
 
                         nbpythonexe += 1
@@ -129,14 +129,14 @@ class PyExe:
 
 def main():
     pyexe = PyExe()
-
+    #sys.argv="c:\\"
     if len(sys.argv) > 1:
-
-        defaultrootpath = str(sys.argv[1])
+        
+        defaultrootpath = sys.argv
         if "-notitle" in sys.argv:
             print("ok")
         # TODO handle tile fields line showing optionnal
-        print(f"showpy start process for :{defaultrootpath}")
+        print(f"showpy start process for [{defaultrootpath}]")
         pyexe.search(defaultrootpath)
     else:
         print("[showpy] [path]:")
