@@ -1,19 +1,19 @@
 # -------------------------------------------------------------------------------
 # Name:        showpy
-# Purpose:
+# Purpose:     list all version of python executable in the specified directory with directory recursivity
 #
 # Author:      catineau
 #
 # Created:     03/11/2021
-# Copyright:   (c) catineau 2021
-# Licence:     <your licence>
+# Copyright:   (c) Grégoire Catineau 2022
+# Licence:     CC0
 # -------------------------------------------------------------------------------
 # keep to implemente:
-#
-#  - make an object from this tool : example a 'showpy' object , showpy.search("c:\",getversion=True)
-#  - choose information de get from file : version , size hash path, sum of files size,
+#  TODO
+#  Done - make an object from this tool : example a 'showpy' object , showpy.search("c:\",getversion=True)
+#  - choose options to process and display: version , size hash path, sum of files size,
 #  - return a tuple version, size, hash , path etc...
-#  - passing argument : showpy c:\ : Done
+#  Done - passing directory argument : showpy c:\
 #  - convert path to Windows of linux  with detection of them example : 'posix', 'nt', 'java'
 #  - create a sub function for print informations  print("version: ", ..... get info(result)...
 #  - get the better and fastest hash function :  source : https://stackoverflow.com/questions/61229719/hashing-file-within-drf-post-http-request
@@ -28,40 +28,45 @@ import sys
 import re
 
 
-class PyDir:
+class PyExe:
+    #TODO implement regex with for "python*.exe" or "py*.Exe"
+
     pythonExecutables = ["python.exe", "python3.exe", "py.exe", "python27.exe", "py3.exe", "py2.exe", "pypy3.exe",
                          "pypy.exe"]
     pythonBasedExecutables = ["py2.exe", "pypy3.exe", "cpython.exe", "ipython.exe"]
+<<<<<<< HEAD
     
     pythonExecutablesRegex = ['python3.9.exe']
 
+=======
+    #TODO implement these options
+>>>>>>> 5c2ad53666791fd3e590fd9536e7a74731d8a759
     appOptions = {"version": "-version", "hash": "-hash", "size": "-size", "path": "-path"}
 
     def __init__(self):
         self.current_file_size = 0
         self.current_fileNamePath = ""
 
-    def printInfos(self, *args):
-        if len(args) == 0:
-            versionInfo = "None"
+    def detect_version(self,chaine,regex):
+
+
+        if chaine.stderr.decode("utf-8") != "":
+            versionInfo = str(chaine.stderr.decode("utf-8").strip("\r\n"))
         else:
-            result = args[0]
-            # remove text inside parentheses with re
-            versionInfo = result.stdout.decode("utf-8").strip("\r\n").upper()
-            if versionInfo == "":
-                return "None"
-            #versionInfo = re.sub("([\(\[]).*?([\)\]])", "\g<1>\g<2>", versionInfo)
-            #versionInfo = versionInfo.replace("()", "(...)")
-            versionInfo = re.sub(r"(\w+)( |.)(\d+)( |.)(\d+)( |.)(\d+)",r"\1 \3.\5.\7",versionInfo)
+            versionInfo = str(chaine.stdout)
 
-            if result.stderr.decode("utf-8") != "":
-                versionInfo = result.stderr.decode("utf-8")
+        if len(str(chaine)) == 0:
+            versionInfo = "[none]"
 
-        versionInfo = versionInfo.split("\r\n")[0]
-        line = f" version: {versionInfo : <20} size: {self.current_file_size:>10} hash: {self.sha256sum(self.current_fileNamePath):>65} path: {self.current_fileNamePath}"
-        print(line)
-        # print(line.replace("\n", ""))
-        # print("version: ", versionInfo.ljust(19), " size:",              str(self.current_file_size).rjust(10), " hash:", self.sha256sum(self.current_fileNamePath).ljust(65), " path: ",self.current_fileNamePath)
+
+
+        regex = r"([1-9][0-9]|[0-9])(\.|)([1-9][0-9]|[0-9]|)(\.|)([1-9][0-9]|[0-9]|)"
+
+        matches = re.search(regex, versionInfo)
+        if matches:
+            return str(matches.group(1)+"."+matches.group(3)+"."+matches.group(5))
+        else:
+            return ""
 
     def sha256sum(self, filename):
         if os.path.getsize(filename) > 0:
@@ -81,7 +86,9 @@ class PyDir:
     def get_platform(self):
         return sys.platform
 
-    def process(self, defaultrootpath):
+    def search(self, defaultrootpath):
+
+
 
         self.defaultrootpath = defaultrootpath
 
@@ -90,36 +97,44 @@ class PyDir:
 
         platform = self.get_platform()  # linux or win32
 
-        nbrversion = 0
+
         nbpythonexe = 0
 
         for root, subFolder, files in os.walk(self.defaultrootpath):
             for item in files:
                 if item in (self.pythonExecutables or self.pythonBasedExecutables):
+                    version=""
                     # display hash of file . https://nitratine.net/blog/post/how-to-hash-files-in-python/
                     self.current_fileNamePath = str(os.path.join(root, item))
                     self.current_file_size = os.path.getsize(self.current_fileNamePath)
-                    if self.current_file_size == 0:
-                        # print("size error for file:",(fileNamePath)," size=",file_size)
-                        self.printInfos()
+                    #print(nbpythonexe," ",self.current_fileNamePath)
 
-                        continue
+                    if r"c:\Users\catineau\AppData\Local\Programs\Python\Python39\Lib\venv\scripts\nt\python.exe" == self.current_fileNamePath:
+                        pass
+
+                    if self.current_file_size == 0:
+                        pass
+                    line=""
                     try:
                         result = subprocess.run([self.current_fileNamePath, "--version"], capture_output=True)
 
+                        version = self.detect_version(result,r"([1-9][0-9]|[0-9])(\.|)([1-9][0-9]|[0-9]|)(\.|)([1-9][0-9]|[0-9]|)")
+
                     except:
-                        self.printInfos()
-                    else:
-                        self.printInfos(result)
-                        # print("version : probleme",fileNamePath )
+                        version="[None]"
 
                     finally:
+                        #line = f" version: {version : <8} size: {self.current_file_size:>10} h(256): {self.sha256sum(self.current_fileNamePath):>65} path: {self.current_fileNamePath}"
+                        line = f" version: {version : <8} size: {self.current_file_size:>10} h(256): ....{self.sha256sum(self.current_fileNamePath)[:10]:>10} path: {self.current_fileNamePath}"
+                        print(line)
+
                         nbpythonexe += 1
 
-        print("sum of real python executable version found :{}".format(nbpythonexe))
+        print("sum of python executable version found :{}".format(nbpythonexe))
 
 
 def main():
+<<<<<<< HEAD
     pyDir = PyDir()
     arg= sys.argv    
     #arg = "D:\\dev\\py\\showpy\\showpy\\showpy.py c:\\"
@@ -127,10 +142,18 @@ def main():
 
         defaultrootpath = str(arg[1])
         if "-notitle" in arg:
+=======
+    pyexe = PyExe()
+    #sys.argv="c:\\"
+    if len(sys.argv) > 1:
+        
+        defaultrootpath = sys.argv
+        if "-notitle" in sys.argv:
+>>>>>>> 5c2ad53666791fd3e590fd9536e7a74731d8a759
             print("ok")
-        # TODO handle tile showing optionnal
-        print(f"showpy start process for :{defaultrootpath}")
-        pyDir.process(defaultrootpath)
+        # TODO handle tile fields line showing optionnal
+        print(f"showpy start process for [{defaultrootpath}]")
+        pyexe.search(defaultrootpath)
     else:
         print("[showpy] [path]:")
 
