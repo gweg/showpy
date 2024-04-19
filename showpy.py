@@ -1,11 +1,11 @@
 # -------------------------------------------------------------------------------
 # Name:        showpy
-# Purpose:     list all version of python executable in the specified directory with directory recursivity
+# Purpose:     list the version of python executable in the from the specified root directory 
 #
 # Author:      catineau
 #
 # Created:     19/04/2021
-# Copyright:   (c) Grégoire Catineau 2022
+# Copyright:   (c) Grégoire Catineau 2024
 # Licence:     CC0
 # -------------------------------------------------------------------------------
 # keep to implemente:
@@ -28,7 +28,11 @@ import sys
 import re
 
 
+
 class PyExe:
+    
+    separator = " ; "
+    
     #TODO implement regex with for "python*.exe" or "py*.Exe"
 
     pythonExecutables = ["python.exe", "python3.exe", "py.exe", "python27.exe", "py3.exe", "py2.exe", "pypy3.exe",
@@ -63,7 +67,22 @@ class PyExe:
         if matches:
             return str(matches.group(1)+"."+matches.group(3)+"."+matches.group(5))
         else:
+            return None
+    def calculate_md5(self,file_path):
+        # Ouvrir le fichier en mode lecture binaire
+        try:
+            with open(file_path, "rb") as f:
+                # Créer un objet hash MD5
+                md5_hash = hashlib.md5()
+                
+                # Lire le fichier par blocs pour éviter la surcharge de la mémoire
+                for chunk in iter(lambda: f.read(4096), b""):
+                    md5_hash.update(chunk)
+        
+            # Retourner la somme de contrôle MD5 sous forme de chaîne hexadécimale    
+        except:
             return ""
+        return md5_hash.hexdigest()
 
     def sha256sum(self, filename):
         if os.path.getsize(filename) > 0:
@@ -75,7 +94,7 @@ class PyExe:
                     h.update(mv[:n])
             return h.hexdigest()
         else:
-            return "None"
+            return None
 
     def get_root_path(self):
         return os.path.abspath(os.sep)
@@ -96,38 +115,45 @@ class PyExe:
 
 
         nbpythonexe = 0
-
+        # print header
+        line = f"{'version':<8}{self.separator}{'bytes':>10}{self.separator}{'MD5 Sum'.ljust(32)}{self.separator}path"
+        print(line)
         for root, subFolder, files in os.walk(self.defaultrootpath):
-            for item in files:
-                if item in (self.pythonExecutables or self.pythonBasedExecutables):
-                    version=""
-                    # display hash of file . https://nitratine.net/blog/post/how-to-hash-files-in-python/
-                    self.current_fileNamePath = str(os.path.join(root, item))
-                    self.current_file_size = os.path.getsize(self.current_fileNamePath)
-                    #print(nbpythonexe," ",self.current_fileNamePath)
+            try:
+                if str(files).index('.exe'):
+                    for item in files:
+                        
+                        if item in (self.pythonExecutables or self.pythonBasedExecutables):
+                            version=""
+                            # display hash of file . https://nitratine.net/blog/post/how-to-hash-files-in-python/
+                            self.current_fileNamePath = str(os.path.join(root, item))
+                            self.current_file_size = os.path.getsize(self.current_fileNamePath)
+                            #print(nbpythonexe," ",self.current_fileNamePath)
 
-                    if r"c:\Users\catineau\AppData\Local\Programs\Python\Python39\Lib\venv\scripts\nt\python.exe" == self.current_fileNamePath:
-                        pass
+                            if r"c:\Users\catineau\AppData\Local\Programs\Python\Python39\Lib\venv\scripts\nt\python.exe" == self.current_fileNamePath:
+                                pass
 
-                    if self.current_file_size == 0:
-                        pass
-                    line=""
-                    try:
-                        result = subprocess.run([self.current_fileNamePath, "--version"], capture_output=True)
+                            if self.current_file_size == 0:
+                                pass
+                            line=""
+                            try:
+                                result = subprocess.run([self.current_fileNamePath, "--version"], capture_output=True)
 
-                        version = self.detect_version(result,r"([1-9][0-9]|[0-9])(\.|)([1-9][0-9]|[0-9]|)(\.|)([1-9][0-9]|[0-9]|)")
+                                version = self.detect_version(result,r"([1-9][0-9]|[0-9])(\.|)([1-9][0-9]|[0-9]|)(\.|)([1-9][0-9]|[0-9]|)")
 
-                    except:
-                        version="[None]"
+                            except:
+                                version="[None]"
 
-                    finally:
-                        #line = f" version: {version : <8} size: {self.current_file_size:>10} h(256): {self.sha256sum(self.current_fileNamePath):>65} path: {self.current_fileNamePath}"
-                        line = f" version: {version : <8} size: {self.current_file_size:>10} h(256): ....{self.sha256sum(self.current_fileNamePath)[:10]:>10} path: {self.current_fileNamePath}"
-                        print(line)
+                            finally:
+                                #line = f" version: {version : <8} size: {self.current_file_size:>10} h(256): {self.sha256sum(self.current_fileNamePath):>65} path: {self.current_fileNamePath}"
+                                line = f"{(version) or '[None]':<8}{self.separator}{"{:,}".format(self.current_file_size):>10}{self.separator}{self.calculate_md5(self.current_fileNamePath).ljust(32)}{self.separator}{self.current_fileNamePath}"
+                                print(line)
 
-                        nbpythonexe += 1
+                                nbpythonexe += 1
+            except:
+                pass # pas d'.exe dans la liste
 
-        print("sum of python executable version found :{}".format(nbpythonexe))
+        print("{}".format(nbpythonexe)+" version of Python was found")
 
 
 def main():
@@ -135,7 +161,8 @@ def main():
     #sys.argv="c:\\"
     if len(sys.argv) > 1:
         
-        defaultrootpath = sys.argv
+        defaultrootpath = sys.argv[1]
+        
         if "-notitle" in sys.argv:
 
             print("ok")
