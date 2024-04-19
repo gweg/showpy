@@ -34,13 +34,10 @@ class PyExe:
     pythonExecutables = ["python.exe", "python3.exe", "py.exe", "python27.exe", "py3.exe", "py2.exe", "pypy3.exe",
                          "pypy.exe"]
     pythonBasedExecutables = ["py2.exe", "pypy3.exe", "cpython.exe", "ipython.exe"]
-<<<<<<< HEAD
     
     pythonExecutablesRegex = ['python3.9.exe']
 
-=======
     #TODO implement these options
->>>>>>> 5c2ad53666791fd3e590fd9536e7a74731d8a759
     appOptions = {"version": "-version", "hash": "-hash", "size": "-size", "path": "-path"}
 
     def __init__(self):
