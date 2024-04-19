@@ -140,7 +140,7 @@ class PyExe:
             except:
                 pass # pas d'.exe dans la liste
 
-        print("{}".format(nbpythonexe)+" version of Python was found")
+        print("{}".format(nbpythonexe)+" version(s) of Python was found")
 
 
 def main():
