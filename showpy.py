@@ -23,8 +23,6 @@ import hashlib
 import sys
 import re
 
-
-
 class PyExe:
     
     separator = " ; "
@@ -36,9 +34,7 @@ class PyExe:
     pythonBasedExecutables = ["py2.exe", "pypy3.exe", "cpython.exe", "ipython.exe"]
     
     pythonExecutablesRegex = ['python3.9.exe']
-    
-    #TODO implement these options
-    appOptions = {"version": "-version", "hash": "-hash", "size": "-size", "path": "-path"}
+
 
     def __init__(self):
         self.current_file_size = 0
@@ -54,8 +50,6 @@ class PyExe:
 
         if len(str(chaine)) == 0:
             versionInfo = "[none]"
-
-
 
         regex = r"([1-9][0-9]|[0-9])(\.|)([1-9][0-9]|[0-9]|)(\.|)([1-9][0-9]|[0-9]|)"
 
@@ -85,7 +79,7 @@ class PyExe:
             h = hashlib.sha256()
             b = bytearray(128 * 1024)
             mv = memoryview(b)
-            with open(filename, 'rb', buffering=0) as f:
+            with open(filename, 'rb', buffering = 0) as f:
                 for n in iter(lambda: f.readinto(mv), 0):
                     h.update(mv[:n])
             return h.hexdigest()
@@ -100,15 +94,12 @@ class PyExe:
 
     def search(self, defaultrootpath):
 
-
-
         self.defaultrootpath = defaultrootpath
 
         if defaultrootpath == "":
             self.defaultrootpath = self.get_root_path()
 
         platform = self.get_platform()  # linux or win32
-
 
         nbpythonexe = 0
         # print header
@@ -120,7 +111,7 @@ class PyExe:
                     for item in files:
                         
                         if item in (self.pythonExecutables or self.pythonBasedExecutables):
-                            version=""
+                            version = ""
                             # display hash of file . https://nitratine.net/blog/post/how-to-hash-files-in-python/
                             self.current_fileNamePath = str(os.path.join(root, item))
                             self.current_file_size = os.path.getsize(self.current_fileNamePath)
@@ -131,7 +122,7 @@ class PyExe:
 
                             if self.current_file_size == 0:
                                 pass
-                            line=""
+                            line = ""
                             try:
                                 result = subprocess.run([self.current_fileNamePath, "--version"], capture_output=True)
 
