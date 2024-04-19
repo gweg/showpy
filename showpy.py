@@ -1,6 +1,6 @@
 # -------------------------------------------------------------------------------
 # Name:        showpy
-# Purpose:     list the version of python executable in the from the specified root directory 
+# Purpose:     list all version of python executable from the specified root directory 
 #
 # Author:      Grégoire Catineau
 #
