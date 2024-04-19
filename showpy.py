@@ -2,23 +2,19 @@
 # Name:        showpy
 # Purpose:     list the version of python executable in the from the specified root directory 
 #
-# Author:      catineau
+# Author:      Grégoire Catineau
 #
 # Created:     19/04/2021
-# Copyright:   (c) Grégoire Catineau 2024
-# Licence:     CC0
 # -------------------------------------------------------------------------------
 # keep to implemente:
 #  TODO
 #  Done - make an object from this tool : example a 'showpy' object , showpy.search("c:\",getversion=True)
 #  - choose options to process and display: version , size hash path, sum of files size,
-#  - return a tuple version, size, hash , path etc...
+#  - return a list : version, size, hash , path etc...
 #  Done - passing directory argument : showpy c:\
-#  - convert path to Windows of linux  with detection of them example : 'posix', 'nt', 'java'
 #  - create a sub function for print informations  print("version: ", ..... get info(result)...
 #  - get the better and fastest hash function :  source : https://stackoverflow.com/questions/61229719/hashing-file-within-drf-post-http-request
-# -  possibility have separator :  version:  Python 3.9.1;size= 923192 ; hash= d1542dbd731960ec3636047de092f09d7fba4da5252acca4dd9be1d6a4600caf;  path:  c:\Windows\py.exe
-# - show statistic ex: sum of files size, same hash, sort version, etc...
+#  - show statistic ex: sum of files size, same hash, sort version, etc...
 #
 
 import subprocess
