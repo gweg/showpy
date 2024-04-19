@@ -32,6 +32,8 @@ class PyDir:
     pythonExecutables = ["python.exe", "python3.exe", "py.exe", "python27.exe", "py3.exe", "py2.exe", "pypy3.exe",
                          "pypy.exe"]
     pythonBasedExecutables = ["py2.exe", "pypy3.exe", "cpython.exe", "ipython.exe"]
+    
+    pythonExecutablesRegex = ['python3.9.exe']
 
     appOptions = {"version": "-version", "hash": "-hash", "size": "-size", "path": "-path"}
 
@@ -119,11 +121,12 @@ class PyDir:
 
 def main():
     pyDir = PyDir()
+    arg= sys.argv    
+    #arg = "D:\\dev\\py\\showpy\\showpy\\showpy.py c:\\"
+    if len(arg) > 1:
 
-    if len(sys.argv) > 1:
-
-        defaultrootpath = str(sys.argv[1])
-        if "-notitle" in sys.argv:
+        defaultrootpath = str(arg[1])
+        if "-notitle" in arg:
             print("ok")
         # TODO handle tile showing optionnal
         print(f"showpy start process for :{defaultrootpath}")
