@@ -150,9 +150,9 @@ def main():
         
         defaultrootpath = sys.argv[1]
         
-        if "-notitle" in sys.argv:
-
-            print("ok")
+        #if "-notitle" in sys.argv:
+        #    print("ok")
+            
         # TODO handle tile fields line showing optionnal
         print(f"showpy start process for [{defaultrootpath}]")
         pyexe.search(defaultrootpath)
