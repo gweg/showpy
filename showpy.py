@@ -4,7 +4,7 @@
 #
 # Author:      catineau
 #
-# Created:     03/11/2021
+# Created:     19/04/2021
 # Copyright:   (c) Grégoire Catineau 2022
 # Licence:     CC0
 # -------------------------------------------------------------------------------
@@ -36,7 +36,7 @@ class PyExe:
     pythonBasedExecutables = ["py2.exe", "pypy3.exe", "cpython.exe", "ipython.exe"]
     
     pythonExecutablesRegex = ['python3.9.exe']
-
+    
     #TODO implement these options
     appOptions = {"version": "-version", "hash": "-hash", "size": "-size", "path": "-path"}
 
@@ -131,22 +131,13 @@ class PyExe:
 
 
 def main():
-<<<<<<< HEAD
-    pyDir = PyDir()
-    arg= sys.argv    
-    #arg = "D:\\dev\\py\\showpy\\showpy\\showpy.py c:\\"
-    if len(arg) > 1:
-
-        defaultrootpath = str(arg[1])
-        if "-notitle" in arg:
-=======
     pyexe = PyExe()
     #sys.argv="c:\\"
     if len(sys.argv) > 1:
         
         defaultrootpath = sys.argv
         if "-notitle" in sys.argv:
->>>>>>> 5c2ad53666791fd3e590fd9536e7a74731d8a759
+
             print("ok")
         # TODO handle tile fields line showing optionnal
         print(f"showpy start process for [{defaultrootpath}]")
