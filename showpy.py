@@ -29,6 +29,7 @@ class PyExe:
     
     #TODO implement regex with for "python*.exe" or "py*.Exe"
 
+
     pythonExecutables = ["python.exe", "python3.exe", "py.exe", "python27.exe", "py3.exe", "py2.exe", "pypy3.exe",
                          "pypy.exe"]
     pythonBasedExecutables = ["py2.exe", "pypy3.exe", "cpython.exe", "ipython.exe"]
@@ -133,7 +134,7 @@ class PyExe:
 
                             finally:
                                 #line = f" version: {version : <8} size: {self.current_file_size:>10} h(256): {self.sha256sum(self.current_fileNamePath):>65} path: {self.current_fileNamePath}"
-                                line = f"{(version) or '[None]':<8}{self.separator}{"{:,}".format(self.current_file_size):>10}{self.separator}{self.calculate_md5(self.current_fileNamePath).ljust(32)}{self.separator}{self.current_fileNamePath}"
+                                line = f"{(version) or '[None]':<8}{self.separator}{'{:,}'.format(self.current_file_size):>10}{self.separator}{self.calculate_md5(self.current_fileNamePath).ljust(32)}{self.separator}{self.current_fileNamePath}"
                                 print(line)
 
                                 nbpythonexe += 1
@@ -145,10 +146,12 @@ class PyExe:
 
 def main():
     pyexe = PyExe()
-    #sys.argv="c:\\"
+    sys.argv.append("c:\\")
+    
     if len(sys.argv) > 1:
         
         defaultrootpath = sys.argv[1]
+        
         
         #if "-notitle" in sys.argv:
         #    print("ok")
